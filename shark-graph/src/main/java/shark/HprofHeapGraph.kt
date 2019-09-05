@@ -1,6 +1,5 @@
 package shark
 
-import okio.Buffer
 import shark.HeapObject.HeapClass
 import shark.HeapObject.HeapInstance
 import shark.HeapObject.HeapObjectArray
@@ -104,16 +103,7 @@ class HprofHeapGraph internal constructor(
   }
 
   internal fun createFieldValuesReader(record: InstanceDumpRecord): FieldValuesReader {
-    val buffer = Buffer()
-    buffer.write(record.fieldValues)
-
-    val reader = HprofReader(buffer, identifierByteSize)
-
-    return object : FieldValuesReader {
-      override fun readValue(field: FieldRecord): ValueHolder {
-        return reader.readValue(field.type)
-      }
-    }
+    return FieldValuesReader(record, identifierByteSize)
   }
 
   internal fun className(classId: Long): String {
